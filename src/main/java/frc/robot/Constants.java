@@ -21,6 +21,7 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kLeftJoystickPort = 0;
     public static final int  kRightJoystickPort =1;
+    public static final int kXboxControllerPort = 2;
     public static final double kDeadband = 0.05;
 
     public static final int kOffBalanceAngleThresholdDegrees = 3;
@@ -67,6 +68,17 @@ public final class Constants {
     public static final double kDistI = 0.0;
     public static final double kDistD = 0.0;
 
+
+  }
+
+  public final class ArmConstants{
+    public static final int kArmExtenderID = 6;
+    public static final int kArmGripID = 7;
+    public static final int kArmLiftID = 5;
+    // test speeds of all arm motors
+    public static final double kExtenderSpeed = 0.5;
+    public static final double kArmSpeed = 0.5;
+    public static final double kGripSpeed = 0.5;
 
   }
 

@@ -11,9 +11,13 @@ import frc.robot.commands.DriveDistanceManualPIDCmd;
 import frc.robot.commands.DriveDistancePIDCmd;
 import frc.robot.commands.MecanumDriveCmd;
 import frc.robot.commands.TurnToAngleManualPIDCmd;
+import frc.robot.subsystems.ArmExtenderSubsystem;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.GripperSubsystem;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -30,15 +34,21 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_DriveSubsystem = new DriveSubsystem();
+  private final ArmExtenderSubsystem m_ArmExtenderSubsystem = new ArmExtenderSubsystem();
+  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
+  private final GripperSubsystem m_GripperSubsystem = new GripperSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandJoystick m_JoyLeft =
       new CommandJoystick(OperatorConstants.kLeftJoystickPort);
   private final CommandJoystick m_JoyRight =
       new CommandJoystick(OperatorConstants.kRightJoystickPort);
+  //private final CommandXboxController m_XboxController =
+    //  new CommandXboxController(OperatorConstants.kXboxControllerPort);
 
 private final Joystick m_leftJoystick = new Joystick(0);
-//private final Joystick m_rightJoystick = new Joystick(1);
+private final Joystick m_rightJoystick = new Joystick(1);
+//private final XboxController m_xboxController = new XboxController(2);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -99,18 +109,6 @@ private final Joystick m_leftJoystick = new Joystick(0);
       new JoystickButton(m_leftJoystick, 3)
       .onTrue(new DriveDistanceCmd(Units.feetToMeters(-5.0), m_DriveSubsystem));
 
-    new JoystickButton(m_leftJoystick, 4)
-      .onTrue(new DriveDistanceManualPIDCmd(Units.feetToMeters(5.0), m_DriveSubsystem));
-
-    new JoystickButton(m_leftJoystick, 5)
-      .onTrue(new DriveDistanceManualPIDCmd(Units.feetToMeters(-5.0), m_DriveSubsystem));
-
-    new JoystickButton(m_leftJoystick, 6)
-      .onTrue(new DriveDistancePIDCmd(Units.feetToMeters(5), m_DriveSubsystem));
-
-    new JoystickButton(m_leftJoystick, 7)
-      .onTrue(new DriveDistancePIDCmd(Units.feetToMeters(-5), m_DriveSubsystem));
-
     new JoystickButton(m_leftJoystick, 8)
       .onTrue(new TurnToAngleManualPIDCmd(90, m_DriveSubsystem));
 
@@ -134,7 +132,27 @@ private final Joystick m_leftJoystick = new Joystick(0);
     new JoystickButton(m_leftJoystick, 12)
       .onTrue(new InstantCommand(()-> m_DriveSubsystem.resetEncoders()));
 
-  }
+    // button 4 to arm out
+    new JoystickButton(m_rightJoystick, 4)
+      .onTrue(new InstantCommand(()-> m_ArmExtenderSubsystem.setMotor(Constants.ArmConstants.kExtenderSpeed))); 
+    // button 5 to arm in 
+    new JoystickButton(m_rightJoystick, 5)
+      .onTrue(new InstantCommand(()-> m_ArmExtenderSubsystem.setMotor(-Constants.ArmConstants.kExtenderSpeed))); 
+
+    // button 6 arm UP
+    new JoystickButton(m_rightJoystick, 6)
+      .onTrue(new InstantCommand(()-> m_ArmSubsystem.setMotor(Constants.ArmConstants.kArmSpeed))); 
+      // button 7 arm DOWN
+    new JoystickButton(m_rightJoystick, 7)
+      .onTrue(new InstantCommand(()-> m_ArmSubsystem.setMotor(-Constants.ArmConstants.kArmSpeed)));
+
+    // button 8 to grip the ball
+    new JoystickButton(m_rightJoystick, 8)
+      .onTrue(new InstantCommand(()-> m_GripperSubsystem.setMotor(Constants.ArmConstants.kGripSpeed))); 
+      // button 9 to ungrip the ball
+    new JoystickButton(m_rightJoystick, 9)
+    .onTrue(new InstantCommand(()-> m_GripperSubsystem.setMotor(-Constants.ArmConstants.kGripSpeed)));
+}
   
 
   /**
