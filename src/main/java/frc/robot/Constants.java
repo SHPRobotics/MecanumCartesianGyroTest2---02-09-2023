@@ -30,6 +30,7 @@ public final class Constants {
     public static final int kJoystickTurnTo90 = 1;
     public static final int kJoystickGyroReset = 2;
     public static final int kJoystickBalanceRobot = 3;
+    public static final int kGamePadPort = 2;
   }
 
   // DriveConstants ===========================================================================================================================
@@ -71,8 +72,9 @@ public final class Constants {
 
   }
 
+  // ArmConstants ============================================================================================================================
   public final class ArmConstants{
-    public static final int kArmExtenderID = 6;
+    public static final int kArmExtenderID = 10;
     public static final int kArmGripID = 7;
     public static final int kArmLiftID = 5;
     // test speeds of all arm motors

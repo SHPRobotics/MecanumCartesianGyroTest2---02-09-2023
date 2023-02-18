@@ -43,11 +43,14 @@ public class RobotContainer {
       new CommandJoystick(OperatorConstants.kLeftJoystickPort);
   private final CommandJoystick m_JoyRight =
       new CommandJoystick(OperatorConstants.kRightJoystickPort);
+      private final CommandJoystick m_GamePad = 
+      new CommandJoystick(OperatorConstants.kGamePadPort);
   //private final CommandXboxController m_XboxController =
     //  new CommandXboxController(OperatorConstants.kXboxControllerPort);
 
 private final Joystick m_leftJoystick = new Joystick(0);
-private final Joystick m_rightJoystick = new Joystick(1);
+//private final Joystick m_rightJoystick = new Joystick(1);
+private final Joystick m_gamePad = new Joystick(2);
 //private final XboxController m_xboxController = new XboxController(2);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -133,25 +136,33 @@ private final Joystick m_rightJoystick = new Joystick(1);
       .onTrue(new InstantCommand(()-> m_DriveSubsystem.resetEncoders()));
 
     // button 4 to arm out
-    new JoystickButton(m_rightJoystick, 4)
-      .onTrue(new InstantCommand(()-> m_ArmExtenderSubsystem.setMotor(Constants.ArmConstants.kExtenderSpeed))); 
+    new JoystickButton(m_gamePad, 1)
+      .onTrue(new InstantCommand(()-> m_ArmExtenderSubsystem.setMotor(Constants.ArmConstants.kExtenderSpeed)))
+      .onFalse(new InstantCommand(()-> m_ArmExtenderSubsystem.setMotor(0)));
+    
     // button 5 to arm in 
-    new JoystickButton(m_rightJoystick, 5)
-      .onTrue(new InstantCommand(()-> m_ArmExtenderSubsystem.setMotor(-Constants.ArmConstants.kExtenderSpeed))); 
+    new JoystickButton(m_gamePad, 2)
+      .onTrue(new InstantCommand(()-> m_ArmExtenderSubsystem.setMotor(-Constants.ArmConstants.kExtenderSpeed)))
+      .onFalse(new InstantCommand(()-> m_ArmExtenderSubsystem.setMotor(0)));
 
     // button 6 arm UP
-    new JoystickButton(m_rightJoystick, 6)
-      .onTrue(new InstantCommand(()-> m_ArmSubsystem.setMotor(Constants.ArmConstants.kArmSpeed))); 
+    new JoystickButton(m_gamePad, 3)
+      .onTrue(new InstantCommand(()-> m_ArmSubsystem.setMotor(Constants.ArmConstants.kArmSpeed)))
+      .onFalse(new InstantCommand(()-> m_ArmSubsystem.setMotor(0)));
+
       // button 7 arm DOWN
-    new JoystickButton(m_rightJoystick, 7)
-      .onTrue(new InstantCommand(()-> m_ArmSubsystem.setMotor(-Constants.ArmConstants.kArmSpeed)));
+    new JoystickButton(m_gamePad, 4)
+      .onTrue(new InstantCommand(()-> m_ArmSubsystem.setMotor(-Constants.ArmConstants.kArmSpeed)))
+      .onFalse(new InstantCommand(()-> m_ArmSubsystem.setMotor(0)));
 
     // button 8 to grip the ball
-    new JoystickButton(m_rightJoystick, 8)
-      .onTrue(new InstantCommand(()-> m_GripperSubsystem.setMotor(Constants.ArmConstants.kGripSpeed))); 
+    new JoystickButton(m_gamePad, 6)
+      .onTrue(new InstantCommand(()-> m_GripperSubsystem.setMotor(Constants.ArmConstants.kGripSpeed))) 
+      .onFalse(new InstantCommand(()-> m_GripperSubsystem.setMotor(0)));
       // button 9 to ungrip the ball
-    new JoystickButton(m_rightJoystick, 9)
-    .onTrue(new InstantCommand(()-> m_GripperSubsystem.setMotor(-Constants.ArmConstants.kGripSpeed)));
+    new JoystickButton(m_gamePad, 8)
+      .onTrue(new InstantCommand(()-> m_GripperSubsystem.setMotor(-Constants.ArmConstants.kGripSpeed)))
+      .onFalse(new InstantCommand(()-> m_GripperSubsystem.setMotor(0)));
 }
   
 
