@@ -23,7 +23,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_armEncoder.setPositionConversionFactor(ArmConstants.kArmEncoderTick2Degs);
     // set brake mode
     armLiftMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-  
+  /*
     // set softLimits
     armLiftMotor.setSoftLimit(SoftLimitDirection.kForward, ArmConstants.kArmRotationForwardLimit);
     armLiftMotor.setSoftLimit(SoftLimitDirection.kReverse, ArmConstants.kArmRotationReverseLimit);
@@ -31,7 +31,7 @@ public class ArmSubsystem extends SubsystemBase {
     // enable them
     armLiftMotor.enableSoftLimit(SoftLimitDirection.kForward , true);
     armLiftMotor.enableSoftLimit(SoftLimitDirection.kReverse , true);
-  
+  */
   }
 
   @Override
@@ -42,5 +42,9 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setMotor(double speed) {
     armLiftMotor.set(speed);
+ }
+
+ public void resetArmEncoder(){
+  m_armEncoder.setPosition(0);
  }
 }

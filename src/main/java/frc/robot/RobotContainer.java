@@ -112,6 +112,9 @@ private final Joystick m_gamePad = new Joystick(2);
       new JoystickButton(m_leftJoystick, 3)
       .onTrue(new DriveDistanceCmd(Units.feetToMeters(-5.0), m_DriveSubsystem));
 
+      new JoystickButton(m_leftJoystick, 4)
+      .onTrue(new InstantCommand(()-> m_ArmSubsystem.resetArmEncoder()));
+
     new JoystickButton(m_leftJoystick, 8)
       .onTrue(new TurnToAngleManualPIDCmd(90, m_DriveSubsystem));
 
