@@ -5,22 +5,33 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.GripConstants;
 
 public class GripperSubsystem extends SubsystemBase {
   /** Creates a new GripperSubsystem. */
-  private  final CANSparkMax ArmGripMotor = new CANSparkMax(Constants.ArmConstants.kArmGripID, MotorType.kBrushless);
-  public GripperSubsystem() {}
+  private  final CANSparkMax armGripMotor = new CANSparkMax(GripConstants.kArmGripID, MotorType.kBrushless);
+    // Grip encoder
+  private final RelativeEncoder m_gripEncoder = armGripMotor.getEncoder();
+
+  public GripperSubsystem() {
+       // conversion factor from tick to meters
+       m_gripEncoder.setPositionConversionFactor(GripConstants.kGripEncoderTick2Meters);
+       // set softLimit ?
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("GripEncoder value Meter", m_gripEncoder.getPosition());
+  
   }
 
   public void setMotor(double speed) {
-    ArmGripMotor.set(speed);
+    armGripMotor.set(speed);
   }
 }

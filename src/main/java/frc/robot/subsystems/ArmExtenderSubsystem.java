@@ -7,13 +7,22 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
+import frc.robot.Constants.ArmExtenderConstants;
 
 public class ArmExtenderSubsystem extends SubsystemBase {
   /** Creates a new ArmExtenderSubsystem. */
-  private  final CANSparkMax ArmExtenderMotor = new CANSparkMax(Constants.ArmConstants.kArmExtenderID, MotorType.kBrushless);
+  private  final CANSparkMax ArmExtenderMotor = new CANSparkMax(ArmExtenderConstants.kArmExtenderID, MotorType.kBrushless);
+  
   public ArmExtenderSubsystem() {
+    /*// set softLimits
+    armLiftMotor.setSoftLimit(SoftLimitDirection.kForward, ArmConstants.kArmRotationForwardLimit);
+    armLiftMotor.setSoftLimit(SoftLimitDirection.kReverse, ArmConstants.kArmRotationReverseLimit);
 
+    // enable them
+    armLiftMotor.enableSoftLimit(SoftLimitDirection.kForward , true);
+    armLiftMotor.enableSoftLimit(SoftLimitDirection.kReverse , true);
+  */
   }
 
   @Override

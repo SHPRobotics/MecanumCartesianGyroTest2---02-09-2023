@@ -31,10 +31,11 @@ public final class Constants {
     public static final int kJoystickGyroReset = 2;
     public static final int kJoystickBalanceRobot = 3;
     public static final int kGamePadPort = 2;
+    
   }
 
   // DriveConstants ===========================================================================================================================
-  public final class DriveConstants{
+  public static class DriveConstants{
     // Drive's Motors DeviceID
     public static final int kfrontLeftMotorDeviceID = 1;
     public static final int krearLeftMotorDeviceID  =2;
@@ -68,37 +69,50 @@ public final class Constants {
     public static final double kDistP = 0.5;    
     public static final double kDistI = 0.0;
     public static final double kDistD = 0.0;
-
+    
+   // public static final double kArmTick2Deg = 0.9868;
 
   }
 
   // ArmConstants ============================================================================================================================
-  public final class ArmConstants{
-    public static final int kArmExtenderID = 10;
-    public static final int kArmGripID = 7;
+  public static class ArmConstants{
     public static final int kArmLiftID = 5;
     // test speeds of all arm motors
+    public static final double kArmSpeed = 0.2;
+    public static final double kArmEncoderTick2Degs = 360/42 * 1.0;
+    public static final float kArmRotationForwardLimit = 90f;
+    public static final float kArmRotationReverseLimit = 0.0f;
+  }
+
+  // Arm Extender ============================================================================================================================
+  public static class ArmExtenderConstants{
+    public static final int kArmExtenderID = 10;
     public static final double kExtenderSpeed = 0.5;
-    public static final double kArmSpeed = 0.5;
-    public static final double kGripSpeed = 0.5;
+
 
   }
 
+  // GripConstants ============================================================================================================================
+  public static class GripConstants{
+    public static final int kArmGripID = 7;
+    public static final double kGripSpeed = 0.5;
+    public static final double kGripEncoderTick2Meters = Math.PI*Units.inchesToMeters(4.0)/42.0;
+  }
+
   // AutoConstants ============================================================================================================================
-  public final class AutoConstants{
+  public static class AutoConstants{
 
     public static final double kautoSpeed = 0.5;
     // The following PID Controller coefficients will need to be tuned for your drive system.
-    public static final double ksVolts = 0;
-    public static final double kvVoltSecondsPerMeter = 0.0;
-    public static final double kaVoltSecondsPerMeter = 0.0;
-    public static final double kPDriveVel = 0.0;
+    public static final double ksVolts = 0.13647;
+    public static final double kvVoltSecondsPerMeter = 2.7713;
+    public static final double kaVoltSecondsPerMeter = 0.22908;
+    public static final double kPDriveVel = 0.73198;
     // horizontal distance between the left and right wheels in meters
-    public final double kTrackwidthMeters = Units.inchesToMeters(27);
-    public final DifferentialDriveKinematics kDriveKinematics =
-        new DifferentialDriveKinematics(kTrackwidthMeters);
-    public static final double kMaxSpeedMetersPerSecond = 3.0;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3.0;
+    //public final double kTrackwidthMeters = Units.inchesToMeters(27);
+
+    //public static final double kMaxSpeedMetersPerSecond = 3.0;
+    //public static final double kMaxAccelerationMetersPerSecondSquared = 3.0;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
