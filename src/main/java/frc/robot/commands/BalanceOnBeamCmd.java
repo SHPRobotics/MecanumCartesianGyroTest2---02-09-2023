@@ -34,14 +34,16 @@ private static int attempt;
     // Double currentAngle = -1 * Robot.controller.getRawAxis(Constants.LEFT_VERTICAL_JOYSTICK_AXIS) * 45;
 //    currentAngle = m_DriveSubsystem.getGyro().getPitch();
     currentAngle = m_DriveSubsystem.getGyroPitch();
-    error = Constants.BEAM_BALANCED_GOAL_DEGREES - currentAngle;
+//    error = Constants.BEAM_BALANCED_GOAL_DEGREES - currentAngle;
+    error = -Constants.BEAM_BALANCED_GOAL_DEGREES + currentAngle;
 //    drivePower = -Math.min(Constants.BEAM_BALANACED_DRIVE_KP * error, 1);
 //    drivePower = Constants.BEAM_BALANACED_DRIVE_KP * error;
     drivePower = .01 * error;
 attempt++;
 System.out.print("Run # "+ attempt +
                 ", sensor: " + currentAngle +
-                ", error: " + error);
+                ", error: " + error +
+                ", drivPower="+ drivePower);
 
     // Our robot needed an extra push to drive up in reverse, probably due to weight imbalances
     if (drivePower < 0) {

@@ -101,13 +101,13 @@ public class DriveSubsystem extends SubsystemBase {
   // Below are functions for Drive subsystem ====================================  
   // use 3 parameters for Robot-concentric control
   public void drive (double xSpeed, double ySpeed, double rot){
-    m_drive.driveCartesian(xSpeed, ySpeed *1.1, rot);
+    m_drive.driveCartesian(xSpeed, ySpeed *1.05, rot);
     displayDashboard();    
   }
 
   // use 4 parameters for field-centric control
   public void drive(double xSpeed, double ySpeed, double rot, Rotation2d gyroAngle) {
-    m_drive.driveCartesian(xSpeed, ySpeed *1.1, rot, gyroAngle);
+    m_drive.driveCartesian(xSpeed, ySpeed *1.05, rot, gyroAngle);
     displayDashboard();    
   }
 
@@ -193,17 +193,11 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public float getGyroPitch(){
-    // realPitch = 17.552 * getPitch + 5.6583
-    //
-    //return getGyro().getPitch() * 17.552f + 5.6583f;
-    return getGyro().getRoll(); // for unkown reason we have to swap pitch and roll .getPitch();
+    return getGyro().getPitch(); 
   }
 
   public float getGyroRoll(){
-    // realPitch = 17.552 * getPitch + 5.6583
-    //
-    //return getGyro().getPitch() * 17.552f + 5.6583f;
-    return getGyro().getPitch(); // for unkown reason we have to swap pitch and roll .getPitch();
+    return getGyro().getRoll();
   }
 
   // The turn rate of the robot, in degrees per second

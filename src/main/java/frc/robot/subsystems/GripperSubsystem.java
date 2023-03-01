@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,18 +21,32 @@ public class GripperSubsystem extends SubsystemBase {
 
   public GripperSubsystem() {
        // conversion factor from tick to meters
-       m_gripEncoder.setPositionConversionFactor(GripConstants.kGripEncoderTick2Meters);
-       // set softLimit ?
-  }
+  //     m_gripEncoder.setPositionConversionFactor(GripConstants.kGripEncoderTick2Meters);
+
+    //set softLimits
+    armGripMotor.setSoftLimit(SoftLimitDirection.kForward, 0.0f);
+    armGripMotor.setSoftLimit(SoftLimitDirection.kReverse, -94.384f);
+
+    // enable them
+    armGripMotor.enableSoftLimit(SoftLimitDirection.kForward , true);
+    armGripMotor.enableSoftLimit(SoftLimitDirection.kReverse , true);
+    
+}
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("GripEncoder value Meter", m_gripEncoder.getPosition());
+    SmartDashboard.putNumber("GripEncoder value ", m_gripEncoder.getPosition());
   
   }
 
   public void setMotor(double speed) {
     armGripMotor.set(speed);
   }
+
+
+  public void resetGripEncoder(){
+    m_gripEncoder.setPosition(0);
+   }
+  
 }
