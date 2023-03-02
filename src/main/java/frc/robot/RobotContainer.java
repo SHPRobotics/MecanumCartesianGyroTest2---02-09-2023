@@ -15,6 +15,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.GripperSubsystem;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -117,6 +118,8 @@ private final Joystick m_gamePad = new Joystick(2);
       new JoystickButton(m_leftJoystick, 5)
       .onTrue(new InstantCommand(()-> m_GripperSubsystem.resetGripEncoder()));
 
+    
+
 /*
     new JoystickButton(m_leftJoystick, 8)
       .onTrue(new TurnToAngleManualPIDCmd(90, m_DriveSubsystem));
@@ -162,14 +165,24 @@ private final Joystick m_gamePad = new Joystick(2);
       .onTrue(new InstantCommand(()-> m_ArmSubsystem.setMotor(Constants.ArmConstants.kArmSpeed)))
       .onFalse(new InstantCommand(()-> m_ArmSubsystem.setMotor(0)));
 
-    // button 6 to grip the ball
+    // button 6 to grip the cube
     new JoystickButton(m_gamePad, 6)
-      .onTrue(new InstantCommand(()-> m_GripperSubsystem.setMotor(GripConstants.kGripSpeed))) 
+      .onTrue(new InstantCommand(()-> m_GripperSubsystem.grabCube()))
       .onFalse(new InstantCommand(()-> m_GripperSubsystem.setMotor(0)));
-      // button 8 to ungrip the ball
+      // button 8 to ungrip the cube
     new JoystickButton(m_gamePad, 8)
       .onTrue(new InstantCommand(()-> m_GripperSubsystem.setMotor(-GripConstants.kGripSpeed)))
       .onFalse(new InstantCommand(()-> m_GripperSubsystem.setMotor(0)));
+
+      // button 5 to grip the cone
+      new JoystickButton(m_gamePad, 5)
+      .onTrue(new InstantCommand(()-> m_GripperSubsystem.grabCone()))
+      .onFalse(new InstantCommand(()-> m_GripperSubsystem.setMotor(0)));
+      // button 7 to ungrip the cone
+      new JoystickButton(m_gamePad, 7)
+      .onTrue(new InstantCommand(()-> m_GripperSubsystem.setMotor(-GripConstants.kGripSpeed)))
+      .onFalse(new InstantCommand(()-> m_GripperSubsystem.setMotor(0)));
+      
 }
   
 

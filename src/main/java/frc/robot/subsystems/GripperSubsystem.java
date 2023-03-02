@@ -17,21 +17,17 @@ public class GripperSubsystem extends SubsystemBase {
   /** Creates a new GripperSubsystem. */
   private  final CANSparkMax armGripMotor = new CANSparkMax(GripConstants.kArmGripID, MotorType.kBrushless);
     // Grip encoder
-  private final RelativeEncoder m_gripEncoder = armGripMotor.getEncoder();
+  public final RelativeEncoder m_gripEncoder = armGripMotor.getEncoder();
+
+  public boolean isSetLimitsCube = false;
+  public boolean isSetLimitsCone = false;
 
   public GripperSubsystem() {
-       // conversion factor from tick to meters
-  //     m_gripEncoder.setPositionConversionFactor(GripConstants.kGripEncoderTick2Meters);
+    // conversion factor from tick to meters
+    // m_gripEncoder.setPositionConversionFactor(GripConstants.kGripEncoderTick2Meters);
 
-    //set softLimits
-    armGripMotor.setSoftLimit(SoftLimitDirection.kForward, 0.0f);
-    armGripMotor.setSoftLimit(SoftLimitDirection.kReverse, -94.384f);
-
-    // enable them
-    armGripMotor.enableSoftLimit(SoftLimitDirection.kForward , true);
-    armGripMotor.enableSoftLimit(SoftLimitDirection.kReverse , true);
-    
-}
+    //setSoftLimitsCube();;
+  }    
 
   @Override
   public void periodic() {
@@ -44,9 +40,58 @@ public class GripperSubsystem extends SubsystemBase {
     armGripMotor.set(speed);
   }
 
-
   public void resetGripEncoder(){
     m_gripEncoder.setPosition(0);
    }
-  
-}
+
+  public void grabCube(){
+    if (!isSetLimitsCube) setSoftLimitsCube();
+    setMotor(GripConstants.kGripSpeed);
+  }
+
+  public void grabCone(){
+    if (!isSetLimitsCone) setSoftLimitsCone();
+    setMotor(GripConstants.kGripSpeed);
+  }
+
+  public void setSoftLimitsCone(){
+    disableSoftLimits();
+
+    //set softLimits cone
+    armGripMotor.setSoftLimit(SoftLimitDirection.kForward, 85.0f); //minimum val for cube to be squished
+    armGripMotor.setSoftLimit(SoftLimitDirection.kReverse, -85.0f); // max val for gripper to  be extended
+    
+    enableSoftLimits();
+
+    isSetLimitsCone = true;
+    isSetLimitsCube = false;
+  }
+
+  public void setSoftLimitsCube(){
+    // if gripper is to the left of Cube's min limit, bring the gripper at 0 position before setting the softLimits
+    if (m_gripEncoder.getPosition() > 0) m_gripEncoder.setPosition(0) ;
+
+    disableSoftLimits();
+
+    //set softLimits for the cube
+    armGripMotor.setSoftLimit(SoftLimitDirection.kForward, 0.0f); //minimum val for cube to be squished
+    armGripMotor.setSoftLimit(SoftLimitDirection.kReverse, -85.0f); // max val for gripper to  be extended
+    
+    enableSoftLimits();
+
+    isSetLimitsCube = true;
+    isSetLimitsCone = false;
+
+  }
+
+  public void disableSoftLimits(){  
+    armGripMotor.enableSoftLimit(SoftLimitDirection.kForward , false);
+    armGripMotor.enableSoftLimit(SoftLimitDirection.kReverse , false);
+  }
+
+  public void enableSoftLimits(){  
+    armGripMotor.enableSoftLimit(SoftLimitDirection.kForward , true);
+    armGripMotor.enableSoftLimit(SoftLimitDirection.kReverse , true);
+  }
+
+} // End of public class GripperSubsystem
