@@ -8,16 +8,12 @@ import frc.robot.Constants.ArmExtenderConstants;
 import frc.robot.Constants.GripConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.BalanceOnBeamCmd;
-import frc.robot.commands.DriveDistanceCmd;
 import frc.robot.commands.MecanumDriveCmd;
 import frc.robot.subsystems.ArmExtenderSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.GripperSubsystem;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -43,8 +39,8 @@ public class RobotContainer {
       new CommandJoystick(OperatorConstants.kLeftJoystickPort);
   private final CommandJoystick m_JoyRight =
       new CommandJoystick(OperatorConstants.kRightJoystickPort);
-      private final CommandJoystick m_GamePad = 
-      new CommandJoystick(OperatorConstants.kGamePadPort);
+  //private final CommandJoystick m_GamePad = 
+  //    new CommandJoystick(OperatorConstants.kGamePadPort);
   //private final CommandXboxController m_XboxController =
     //  new CommandXboxController(OperatorConstants.kXboxControllerPort);
 
@@ -103,7 +99,10 @@ private final Joystick m_gamePad = new Joystick(2);
                                 ()-> -m_rightJoystick.getX()));
 */
     // button 1 to reset gyro
-    new JoystickButton(m_leftJoystick, 1)
+    //new JoystickButton(m_leftJoystick, 1)
+    //  .onTrue(new InstantCommand(()-> m_DriveSubsystem.resetGyro()));
+
+    m_JoyLeft.button(1)
       .onTrue(new InstantCommand(()-> m_DriveSubsystem.resetGyro()));
 /*
     new JoystickButton(m_leftJoystick, 2)

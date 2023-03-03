@@ -5,31 +5,43 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmExtenderConstants;
 
 public class ArmExtenderSubsystem extends SubsystemBase {
   /** Creates a new ArmExtenderSubsystem. */
-  private  final CANSparkMax ArmExtenderMotor = new CANSparkMax(ArmExtenderConstants.kArmExtenderID, MotorType.kBrushless);
+  private final CANSparkMax m_armExtenderMotor = new CANSparkMax(ArmExtenderConstants.kArmExtenderID, MotorType.kBrushless);
+  private final RelativeEncoder m_armExtenderEncoder = m_armExtenderMotor.getEncoder();
+
   
   public ArmExtenderSubsystem() {
-    /*// set softLimits
-    armLiftMotor.setSoftLimit(SoftLimitDirection.kForward, ArmConstants.kArmRotationForwardLimit);
-    armLiftMotor.setSoftLimit(SoftLimitDirection.kReverse, ArmConstants.kArmRotationReverseLimit);
+    // set brake mode
+    m_armExtenderMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+/* 
+    // Test these bad boys out
+    // set softLimits
+    m_armExtenderMotor.setSoftLimit(SoftLimitDirection.kForward, 0.0f);
+    m_armExtenderMotor.setSoftLimit(SoftLimitDirection.kReverse, 50.0f);
 
     // enable them
-    armLiftMotor.enableSoftLimit(SoftLimitDirection.kForward , true);
-    armLiftMotor.enableSoftLimit(SoftLimitDirection.kReverse , true);
+    m_armExtenderMotor.enableSoftLimit(SoftLimitDirection.kForward , true);
+    m_armExtenderMotor.enableSoftLimit(SoftLimitDirection.kReverse , true);
   */
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("ArmExtender Encoder Value ", m_armExtenderEncoder.getPosition());    
   }
+  
   public void setMotor(double speed) {
-    ArmExtenderMotor.set(speed);
+    m_armExtenderMotor.set(speed);
   }
+
 }
