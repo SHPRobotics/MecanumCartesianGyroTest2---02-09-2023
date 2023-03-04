@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -68,6 +72,26 @@ public final class Constants {
     public static final double kDistP = 0.5;    
     public static final double kDistI = 0.0;
     public static final double kDistD = 0.0;
+
+    // Drive's Kinematics (used in DriveSubsystem)
+    public static final double kWheelBase = 0.521;                // 20.5" or 0.521 m Distance in meter between centers of front and back wheels on robot
+    public static final double kTrackWidth = 0.686;               // 27" or 0.686 m Distance in meter between centers of right and left wheels on robot
+    public static final MecanumDriveKinematics kDriveKinematics = 
+        new MecanumDriveKinematics(
+          new Translation2d(kWheelBase / 2, kTrackWidth / 2),     // FL
+          new Translation2d(kWheelBase / 2, -kTrackWidth / 2),    // FR
+          new Translation2d(-kWheelBase / 2, kTrackWidth / 2),    // RL
+          new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));  // RR
+
+    // obtain these values from SysId
+    public static final SimpleMotorFeedforward kFeedforward = 
+      new SimpleMotorFeedforward(0.13647, 2.7713, 0.22908);
+
+    // obtain these values from SysId
+    public static final double kPFrontLeftVel = 0.73198;
+    public static final double kPRearLeftVel = 0.73198;
+    public static final double kPFrontRightVel = 0.73198;
+    public static final double kPRearRightVel = 0.73198;
     
    // public static final double kArmTick2Deg = 0.9868;
 
@@ -114,8 +138,24 @@ public final class Constants {
     //public static final double kMaxAccelerationMetersPerSecondSquared = 3.0;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
-    public static final double kRamseteB = 2;
-    public static final double kRamseteZeta = 0.7;
+    //public static final double kRamseteB = 2;
+    //public static final double kRamseteZeta = 0.7;
+    public static final double kPXController = 0.5;
+    public static final double kPYController = 0.5;
+    public static final double kPThetaController = 0.5;
+    public static final double kMaxSpeedMetersPerSecond = 0;
+
+    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+    //public static final double kMaxAngularSpeedRadiansPerSecond = 
+    //  DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
+
+    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+    //public static final double kMaxAngularSpeedRadiansPerSecondSquared = 3.0;
+
+    // Constraint for the motion profilied robot angle controller
+    public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
+        new TrapezoidProfile.Constraints(
+            kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
 
   }
 

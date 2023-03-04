@@ -5,6 +5,8 @@
 package frc.robot;
 
 import frc.robot.Constants.ArmExtenderConstants;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GripConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.BalanceOnBeamCmd;
@@ -13,9 +15,22 @@ import frc.robot.subsystems.ArmExtenderSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.GripperSubsystem;
+
+import java.io.IOException;
+import java.nio.file.Path;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.MecanumControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -33,6 +48,9 @@ public class RobotContainer {
   private final ArmExtenderSubsystem m_ArmExtenderSubsystem = new ArmExtenderSubsystem();
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private final GripperSubsystem m_GripperSubsystem = new GripperSubsystem();
+
+  // A chooser for autonomous commands
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandJoystick m_JoyLeft =
@@ -60,6 +78,14 @@ private final Joystick m_gamePad = new Joystick(2);
                           ()-> -m_JoyLeft.getY(), 
                           ()-> m_JoyLeft.getX(), 
                           ()-> m_JoyRight.getX()));
+
+    // Add commands to the autonomous command chooser
+    m_chooser.setDefaultOption("straight", loadPathplannerTrajectory("C:/Users/Team 5992 Students/Desktop/MecanumCartesianGyroTest2-02-25-2023/src/main/deploy/deploy/pathplanner/generatedJSON/straight.wpilib.json", true));
+    m_chooser.addOption("curvy", loadPathplannerTrajectory("C:/Users/Team 5992 Students/Desktop/MecanumCartesianGyroTest2-02-25-2023/src/main/deploy/deploy/pathplanner/generatedJSON/curvy.wpilib.json", true));
+
+    // Put the chooser on the dashboard
+    Shuffleboard.getTab("Autonomous").add(m_chooser);
+                          
   }
 
   /**
@@ -191,8 +217,69 @@ private final Joystick m_gamePad = new Joystick(2);
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return null;  //Autos.exampleAuto(m_exampleSubsystem);
+    
+    /*
+     * if no auto: 
+     * return Commands.none();  // or return new InstantCommand();
+     */
+
+     return m_chooser.getSelected();
   }
+
+
+  public Command loadPathplannerTrajectory(String filename, boolean resetOdometry){
+    Trajectory trajectory;
+
+    try{
+      // get the directory name where the trajectory path is located
+      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(filename);
+      // build the trajectory from PathweaverJson file
+      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+    }
+    catch(IOException exception){
+      DriverStation.reportError("unableto open trajectory file "+filename, exception.getStackTrace());
+
+      System.out.println("Unable to read from file"+filename );
+
+      return new InstantCommand();  // do nothing command
+    }
+
+    // Construct command to follow trajectory
+    MecanumControllerCommand mecanumControllerCommand =
+        new MecanumControllerCommand(
+            trajectory,
+            m_DriveSubsystem::getPose,
+            DriveConstants.kFeedforward,
+            DriveConstants.kDriveKinematics,
+
+            // Position controllers
+            new PIDController(AutoConstants.kPXController, 0, 0),
+            new PIDController(AutoConstants.kPYController, 0, 0),
+            new ProfiledPIDController(
+                AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints),
+
+            // Needed for normalizing wheel speeds
+            AutoConstants.kMaxSpeedMetersPerSecond,
+
+            // Velocity PID's
+            new PIDController(DriveConstants.kPFrontLeftVel, 0, 0),
+            new PIDController(DriveConstants.kPRearLeftVel, 0, 0),
+            new PIDController(DriveConstants.kPFrontRightVel, 0, 0),
+            new PIDController(DriveConstants.kPRearRightVel, 0, 0),
+            m_DriveSubsystem::getCurrentWheelSpeeds,
+            m_DriveSubsystem::setDriveMotorControllersVolts, // Consumer for the output motor voltages
+            m_DriveSubsystem);
+
+    if (resetOdometry){
+      // Reset odometry to the starting pose of the trajectory.
+      m_DriveSubsystem.resetOdometry(trajectory.getInitialPose());
+    }
+
+    // Run path following command, then stop at the end.
+    return mecanumControllerCommand.andThen(() -> m_DriveSubsystem.drive(0, 0, 0));
+
+  }
+
+
 }
 

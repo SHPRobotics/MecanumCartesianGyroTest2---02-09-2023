@@ -15,7 +15,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.MecanumDriveMotorVoltages;
+import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
 
@@ -37,6 +42,13 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Gyro
   private final AHRS m_navX2 = new AHRS(SPI.Port.kMXP);
+
+  // Odometry class for tracking robot pose
+  MecanumDriveOdometry m_odometry =
+      new MecanumDriveOdometry(
+          DriveConstants.kDriveKinematics,
+          m_navX2.getRotation2d(),
+          new MecanumDriveWheelPositions());
 
   /** Creates a new ExampleSubsystem. */
   public DriveSubsystem() {
@@ -90,7 +102,9 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //m_drive.driveCartesian(0, 0, 0);
+    // Update the odometry in the periodic block
+    m_odometry.update(m_navX2.getRotation2d(), getCurrentWheelDistances());
+    displayDashboard();
   }
 
   @Override
@@ -112,10 +126,6 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void displayDashboard(){
-    SmartDashboard.putNumber("FL Encoder Value Ft", getFLEncoderFt());
-    SmartDashboard.putNumber("FR Encoder Value Ft", getFREncoderFt());
-    SmartDashboard.putNumber("RL Encoder Value Ft", getRLEncoderFt());
-    SmartDashboard.putNumber("RR Encoder Value Ft", getRREncoderFt());
 
     SmartDashboard.putNumber("Avg. Distance Ft", Units.metersToFeet(getAverageEncoderDistance()) );
 
@@ -148,6 +158,16 @@ public class DriveSubsystem extends SubsystemBase {
     m_drive.setMaxOutput(maxOutput);
   }
 
+/** Sets the drive MotorController to a voltage. */
+public void setDriveMotorControllersVolts(MecanumDriveMotorVoltages volts) {
+  frontLeftMotor.setVoltage(volts.frontLeftVoltage);
+  rearLeftMotor.setVoltage(volts.rearLeftVoltage);
+  frontRightMotor.setVoltage(volts.frontRightVoltage);
+  rearRightMotor.setVoltage(volts.rearRightVoltage);
+
+  m_drive.feed();
+}
+
   // Below are functions for encoders =====================================  
   public void resetEncoders(){
     m_frontLeftEncoder.setPosition(0);
@@ -174,6 +194,23 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double getAverageEncoderDistance() {
     return (m_frontLeftEncoder.getPosition() + m_frontRightEncoder.getPosition()) / 2.0;
+  }
+
+  // Gets the current wheel distance measurements and put them in a MecanumDriveWheelPositions object
+  public MecanumDriveWheelPositions getCurrentWheelDistances() {
+    return new MecanumDriveWheelPositions(
+        m_frontLeftEncoder.getPosition(),
+        m_rearLeftEncoder.getPosition(),
+        m_frontRightEncoder.getPosition(),
+        m_rearRightEncoder.getPosition());
+  }
+
+  public MecanumDriveWheelSpeeds getCurrentWheelSpeeds() {
+    return new MecanumDriveWheelSpeeds(
+        m_frontLeftEncoder.getVelocity(),
+        m_rearLeftEncoder.getVelocity(),
+        m_frontRightEncoder.getVelocity(),
+        m_rearRightEncoder.getVelocity());
   }
 
   // below are functions for Gyro =================================
@@ -203,6 +240,19 @@ public class DriveSubsystem extends SubsystemBase {
   // The turn rate of the robot, in degrees per second
   public double getTurnRate() {
     return m_navX2.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+  // Below are functions for Odometry ==========================================================================
+
+  // get the current estimated pose of the robot
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+
+  // reset the odometry to the specified pose
+  public void resetOdometry(Pose2d pose) {
+    resetEncoders();
+    m_odometry.resetPosition(m_navX2.getRotation2d(), getCurrentWheelDistances(), pose);
   }
 
 }
