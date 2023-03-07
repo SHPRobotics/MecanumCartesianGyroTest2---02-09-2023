@@ -80,8 +80,8 @@ private final Joystick m_gamePad = new Joystick(2);
                           ()-> m_JoyRight.getX()));
 
     // Add commands to the autonomous command chooser
-    m_chooser.setDefaultOption("straight", loadPathplannerTrajectory("C:/Users/Team 5992 Students/Desktop/MecanumCartesianGyroTest2-02-25-2023/src/main/deploy/deploy/pathplanner/generatedJSON/straight.wpilib.json", true));
-    m_chooser.addOption("curvy", loadPathplannerTrajectory("C:/Users/Team 5992 Students/Desktop/MecanumCartesianGyroTest2-02-25-2023/src/main/deploy/deploy/pathplanner/generatedJSON/curvy.wpilib.json", true));
+    m_chooser.setDefaultOption("straight", loadPathplannerTrajectory("C:\Users\Team 5992 Students\Desktop\MecanumCartesianGyroTest2-02-25-2023\src\main\deploy\deploy\pathplanner\generatedJSON\straight.wpilib.json", true));
+    m_chooser.addOption("curvy", loadPathplannerTrajectory("C:\Users\Team 5992 Students\Desktop\MecanumCartesianGyroTest2-02-25-2023\src\main\deploy\deploy\pathplanner\generatedJSON\curvy.wpilib.json", true));
 
     // Put the chooser on the dashboard
     Shuffleboard.getTab("Autonomous").add(m_chooser);
